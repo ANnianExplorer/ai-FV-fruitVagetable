@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpsExchange;
 import com.yzh.reggie.common.R;
 import com.yzh.reggie.entity.User;
 import com.yzh.reggie.service.UserService;
+import com.yzh.reggie.utils.MailUtils;
 import com.yzh.reggie.utils.SMSUtils;
 import com.yzh.reggie.utils.ValidateCodeUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
@@ -46,11 +48,17 @@ public class UserController {
      * @return
      */
     @PostMapping("/sendMsg")
-    public R<String> sendMsg(@RequestBody User user, HttpSession session){
+    public R<String> sendMsg(@RequestBody User user, HttpSession session) throws MessagingException {
         //获取手机号
         String phone = user.getPhone();
 
         if(StringUtils.isNotEmpty(phone)){
+
+            /**
+             * 原来为短信验证代码
+             */
+            //region 原来的短信验证代码
+            /*
             //生成随机的4位验证码
             String code = ValidateCodeUtils.generateValidateCode(4).toString();
 
@@ -60,12 +68,23 @@ public class UserController {
             //SMSUtils.sendMessage("瑞吉外卖","",phone,code);
 
             //需要将生成的验证码保存到Session
+            session.setAttribute(phone,code);*/
+            //endregion
+
+            /**
+             * 现在为邮箱验证代码
+             */
+            // 随机生成验证码
+            String code = MailUtils.achieveCode();
+            log.info("验证码：{}",code);
+            // 这里的phone就是邮箱，code是生成的验证码
+            MailUtils.sendTestMail(phone,code);
             session.setAttribute(phone,code);
 
-            return R.success("手机验证码短信发送成功");
+            return R.success("验证码发送成功");
         }
 
-        return R.error("短信发送失败");
+        return R.error("验证码发送失败");
     }
 
     /**
@@ -77,10 +96,8 @@ public class UserController {
     @PostMapping("/login")
     public R<User> login(@RequestBody Map map, HttpSession session){
         log.info(map.toString());
-
         //获取手机号
         String phone = map.get("phone").toString();
-
         //获取验证码
         String code = map.get("code").toString();
 
@@ -101,6 +118,7 @@ public class UserController {
                 user.setPhone(phone);
                 user.setStatus(1);
                 userService.save(user);
+                user.setName("用户"+codeInSession);
             }
             session.setAttribute("user",user.getId());
             return R.success(user);

@@ -142,6 +142,12 @@ public class OrderController {
         return R.success(orders);
     }
 
+    /**
+     * 查看订单
+     * @param page
+     * @param pageSize
+     * @return
+     */
     @GetMapping("/userPage")
     public R<Page> page(int page,int pageSize){
         // 分页构造器
