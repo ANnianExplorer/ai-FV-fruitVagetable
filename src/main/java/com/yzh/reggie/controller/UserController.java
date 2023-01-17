@@ -53,10 +53,14 @@ public class UserController {
         String phone = user.getPhone();
 
         if(StringUtils.isNotEmpty(phone)){
-            //生成随机的4位验证码
 
+            /**
+             * 原来为短信验证代码
+             */
             //region 原来的短信验证代码
-            /*String code = ValidateCodeUtils.generateValidateCode(4).toString();
+            /*
+            //生成随机的4位验证码
+            String code = ValidateCodeUtils.generateValidateCode(4).toString();
 
             log.info("code={}",code);
 
@@ -92,10 +96,8 @@ public class UserController {
     @PostMapping("/login")
     public R<User> login(@RequestBody Map map, HttpSession session){
         log.info(map.toString());
-
         //获取手机号
         String phone = map.get("phone").toString();
-
         //获取验证码
         String code = map.get("code").toString();
 
