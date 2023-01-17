@@ -34,6 +34,7 @@
         </dependency>
 
         <!--邮箱工具-->
+        <!--maven 地址-->
         <!-- https://mvnrepository.com/artifact/javax.activation/activation -->
         <dependency>
             <groupId>javax.activation</groupId>

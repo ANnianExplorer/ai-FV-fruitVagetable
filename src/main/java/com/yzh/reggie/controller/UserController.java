@@ -54,9 +54,6 @@ public class UserController {
 
         if(StringUtils.isNotEmpty(phone)){
 
-            /**
-             * 原来为短信验证代码
-             */
             //region 原来的短信验证代码
             /*
             //生成随机的4位验证码
