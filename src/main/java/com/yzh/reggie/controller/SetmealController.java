@@ -198,26 +198,27 @@ public class SetmealController {
      * @param id
      * @return
      */
+    // todo 该页面未解决，无法展示
     @GetMapping("/dish/{id}")
-    public R<SetmealDto> dish(@PathVariable("id") Long id) {
-        log.info("套餐详情",id);
-
-        // 获取套餐
-        Setmeal setmeal = setmealService.getById(id);
-        SetmealDto setmealDto = new SetmealDto();
-
-        // 对象拷贝
-        BeanUtils.copyProperties(setmeal,setmealDto);
-
-        LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(SetmealDish::getSetmealId,id);
-
-        // 获得数据
-        List<SetmealDish> list = setmealDishService.list(queryWrapper);
-
-        setmealDto.setSetmealDishes(list);
-
-
-        return R.success(setmealDto);
+    public R<List<DishDto>> showSetmealDish(@PathVariable Long id) {
+        //条件构造器
+        LambdaQueryWrapper<SetmealDish> dishLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        //手里的数据只有setmealId
+        dishLambdaQueryWrapper.eq(SetmealDish::getSetmealId, id);
+        //查询数据
+        List<SetmealDish> records = setmealDishService.list(dishLambdaQueryWrapper);
+        List<DishDto> dtoList = records.stream().map((item) -> {
+            DishDto dishDto = new DishDto();
+            //copy数据
+            BeanUtils.copyProperties(item,dishDto);
+            //查询对应菜品id
+            Long dishId = item.getDishId();
+            //根据菜品id获取具体菜品数据，这里要自动装配 dishService
+            Dish dish = dishService.getById(dishId);
+            //其实主要数据是要那个图片，不过我们这里多copy一点也没事
+            BeanUtils.copyProperties(dish,dishDto);
+            return dishDto;
+        }).collect(Collectors.toList());
+        return R.success(dtoList);
     }
 }
