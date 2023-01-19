@@ -11,6 +11,7 @@ import com.yzh.reggie.utils.ValidateCodeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,8 +40,11 @@ public class UserController {
      * ==============
      */
 
-    @Autowired
+    @Resource
     private UserService userService;
+
+
+
 
     /**
      * 发送手机短信验证码
@@ -54,13 +58,9 @@ public class UserController {
 
         if(StringUtils.isNotEmpty(phone)){
 
-            /**
-             * 原来为短信验证代码
-             */
             //region 原来的短信验证代码
-            /*
             //生成随机的4位验证码
-            String code = ValidateCodeUtils.generateValidateCode(4).toString();
+            /*String code = ValidateCodeUtils.generateValidateCode(4).toString();
 
             log.info("code={}",code);
 
@@ -69,10 +69,15 @@ public class UserController {
 
             //需要将生成的验证码保存到Session
             session.setAttribute(phone,code);*/
+
+            // 将生成的验证码
+
+
             //endregion
 
+            //region 邮箱验证
             /**
-             * 现在为邮箱验证代码
+            /* * 现在为邮箱验证代码
              */
             // 随机生成验证码
             String code = MailUtils.achieveCode();
@@ -80,6 +85,7 @@ public class UserController {
             // 这里的phone就是邮箱，code是生成的验证码
             MailUtils.sendTestMail(phone,code);
             session.setAttribute(phone,code);
+            //endregion
 
             return R.success("验证码发送成功");
         }

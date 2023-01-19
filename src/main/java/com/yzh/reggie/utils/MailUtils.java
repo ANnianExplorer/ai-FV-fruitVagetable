@@ -22,6 +22,7 @@ import javax.servlet.http.HttpSession;
  * @date 2023/01/17
  */
 public class MailUtils {
+    
     public static void sendTestMail(String email, String code) throws MessagingException {
         // 创建Properties 类用于记录邮箱的一些属性
         Properties props = new Properties();
