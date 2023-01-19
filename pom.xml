@@ -59,6 +59,12 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
+        <!--redis 导入-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
         <!--Springboot配置-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
