@@ -13,11 +13,15 @@ import com.yzh.reggie.service.CategoryService;
 import com.yzh.reggie.service.DishFlavorService;
 import com.yzh.reggie.service.DishService;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -26,6 +30,22 @@ import java.util.stream.Collectors;
  * @author 杨振华
  * @since 2023/1/13
  */
+
+//region redis实现菜品缓存
+/**
+ * 前面我们已经实现了移动端菜品查看功能，
+ * 对应的服务端方法为DishController的list方法，
+ * 此方法会根据前端提交的查询条件进行数据库查询操作。
+ * 在高并发的情况下，频繁查询数据库会导致系统性能下降，服务端响应时间增长。
+ * 现在需要对此方法进行缓存优化，提高系统的性能。具体的实现思路如下:
+ * 1、政造DishController的list方法，先从Redis中获取菜品数据，如果有则直接返回，
+ * 无需查询数据库;如果没有则查询数据库，并将查询到的菜品数据放入Redis。
+ * 2、改造DishController的save和update方法，加入清理缓存的逻辑
+ * 注意事项
+ * 在使用缓存过程中，要注意保证数据库中的数据和缓存中的数据一致，
+ * 如果数据库中的数据发生变化，需要及时清理缓存数据。
+ */
+//endregion
 @RestController
 @Slf4j
 @RequestMapping("/dish")
@@ -38,6 +58,9 @@ public class DishController {
     @Resource
     private CategoryService categoryService;
 
+    @Resource
+    private RedisTemplate redisTemplate;
+
     /**
      *  新增菜品
      * @param dishDto
@@ -47,6 +70,7 @@ public class DishController {
     public R<String> save(@RequestBody DishDto dishDto){
         log.info(dishDto.toString());
         dishService.saveWithFlavor(dishDto);
+        deleteRedisCache(dishDto);
         return R.success("新增菜品成功！");
     }
 
@@ -108,8 +132,11 @@ public class DishController {
     public R<DishDto> update(@PathVariable Long id){
         DishDto dishDto = dishService.getByIdWithFlavor(id);
 
+        deleteRedisCache(dishDto);
+
         return R.success(dishDto);
     }
+
 
     /**
      * 保存更新
@@ -146,6 +173,17 @@ public class DishController {
     }*/
     @GetMapping("/list")
     public R<List<DishDto>> list(Dish dish){
+        List<DishDto> dishDtoList = null;
+        String key = "dish_" + dish.getCategoryId() + "_" + dish.getStatus();
+
+        // 先从redis中获取缓存数据
+        // key根据分类id,商品状态来确定
+        dishDtoList = (List<DishDto>) redisTemplate.opsForValue().get(key);// 动态构造
+        if (dishDtoList != null){
+            // 如果存在，直接返回，无需查询数据库
+            return R.success(dishDtoList);
+        }
+        // 如果不存在，需要查询数据库，将查询到的菜品数据缓存到redis
         LambdaQueryWrapper<Dish> dishLambdaQueryWrapper = new LambdaQueryWrapper<>();
 
         dishLambdaQueryWrapper
@@ -156,7 +194,7 @@ public class DishController {
 
         List<Dish> list = dishService.list(dishLambdaQueryWrapper);
 
-        List<DishDto> dishDtoList = list.stream().map((item) -> {
+        dishDtoList = list.stream().map((item) -> {
             DishDto dishDto = new DishDto();
             // 拷贝忽略records
             BeanUtils.copyProperties(item,dishDto);
@@ -178,6 +216,9 @@ public class DishController {
 
             return dishDto;
         }).collect(Collectors.toList());
+
+        // 缓存到redis
+        redisTemplate.opsForValue().set(key,dishDtoList,60, TimeUnit.MINUTES);
 
         return R.success(dishDtoList);
 
@@ -237,5 +278,20 @@ public class DishController {
             }
         }
         return R.success("菜品已经启售！");
+    }
+
+    /**
+     * 删除redis缓存
+     *
+     * @param dishDto 菜dto
+     */
+    private void deleteRedisCache(DishDto dishDto) {
+        // 清理所有菜品的缓存数据
+        // Set keys = redisTemplate.keys("dish_*");
+        // redisTemplate.delete(keys);
+
+        // 精确的清理,清理某个分类下面的数据
+        String key = "dish_" + dishDto.getCategoryId() + "_" + dishDto.getStatus();
+        redisTemplate.delete(key);
     }
 }
