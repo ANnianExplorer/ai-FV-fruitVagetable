@@ -71,9 +71,9 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("瑞吉外卖")
+                .title("果蔬管理平台")
                 .version("1.0")
-                .description("瑞吉外卖接口文档")
+                .description("果蔬管理平台接口文档")
                 .build();
     }
 }

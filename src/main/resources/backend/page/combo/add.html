@@ -189,12 +189,12 @@
             </el-form-item>
           </div>
           <div>
-            <el-form-item label="套餐菜品:" class="setmealFood">
+            <el-form-item label="套餐果蔬:" class="setmealFood">
               <el-form-item>
                 <div class="addDish">
-                  <span v-if="dishTable.length == 0" class="addBut" @click="openAddDish"> + 添加菜品</span>
+                  <span v-if="dishTable.length == 0" class="addBut" @click="openAddDish"> + 添加果蔬</span>
                   <div v-if="dishTable.length != 0" class="content">
-                    <div class="addBut" style="margin-bottom: 20px" @click="openAddDish">+ 添加菜品</div>
+                    <div class="addBut" style="margin-bottom: 20px" @click="openAddDish">+ 添加果蔬</div>
                     <div class="table">
                       <el-table :data="dishTable" style="width: 100%">
                         <el-table-column prop="name" label="名称" width="180" align="center"></el-table-column>
@@ -261,7 +261,7 @@
         </el-form>
       </div>
       <el-dialog
-        title="添加菜品"
+        title="添加果蔬"
         class="addDishList"
         :visible.sync="dialogVisible"
         width="60%"
@@ -270,7 +270,7 @@
         <el-input
           v-model="value"
           class="seachDish"
-          placeholder="请输入菜品名称进行搜索"
+          placeholder="请输入果蔬名称进行搜索"
           style="width: 250px"
           size="small"
           clearable
@@ -324,7 +324,7 @@
           </div>
           <div class="ritCont">
             <div class="tit">
-              已选菜品({{ checkedList.length }})
+              已选果蔬({{ checkedList.length }})
             </div>
             <div class="items">
               <div
@@ -418,17 +418,17 @@
                 // 'message': '请输入套餐价格',
                 validator: (rules, value, callback) => {
                     if (!value) {
-                      callback(new Error('请填写菜品价格'))
+                      callback(new Error('请填写果蔬价格'))
                     } else {
                       const reg = /^\d+(\.\d{0,2})?$/
                       if (reg.test(value)) {
                         if(value < 10000){
                           callback()
                         }else{
-                          callback(new Error('菜品价格小于10000'))
+                          callback(new Error('果蔬价格小于10000'))
                         }
                       } else {
-                        callback(new Error('菜品价格格式只能为数字,且最多保留两位小数'))
+                        callback(new Error('果蔬价格格式只能为数字,且最多保留两位小数'))
                       }
                     }
                   },
@@ -487,18 +487,18 @@
               }
             })
           },
-          // 删除套餐菜品
+          // 删除套餐果蔬
           delDishHandle(index) {
             this.dishTable.splice(index, 1)
             this.checkList.splice(index, 1)
           },
 
-          // 获取添加菜品数据
+          // 获取添加果蔬数据
           getCheckList(value) {
             this.checkList = [...value]
           },
 
-          // 添加菜品
+          // 添加果蔬
           openAddDish() {
             this.seachKey = ''
             this.dialogVisible = true
@@ -507,7 +507,7 @@
             this.keyInd = 0
             this.getDishList(this.dishType[0].id)
           },
-          // 取消添加菜品
+          // 取消添加果蔬
           handleClose(done) {
             // this.$refs.adddish.close()
             this.dialogVisible = false
@@ -515,7 +515,7 @@
             // this.dialogVisible = false
           },
 
-          // 保存添加菜品列表
+          // 保存添加果蔬列表
           addTableList() {
             this.dishTable = JSON.parse(JSON.stringify(this.checkList))
             this.dishTable.forEach((n) => {
@@ -539,7 +539,7 @@
                 prams.status = this.ruleForm ? 1 : 0
                 prams.categoryId = this.ruleForm.idType
                 if(prams.setmealDishes.length < 1){
-                  this.$message.error('请选择菜品！')
+                  this.$message.error('请选择果蔬！')
                   return 
                 }
                 if(!this.imageUrl){
@@ -670,7 +670,7 @@
             })
           },
 
-          // 关键词收搜菜品列表分类
+          // 关键词收搜果蔬列表分类
           getDishForName (name) {
             queryDishList({name}).then(res => {
               if (res.code === 1) {

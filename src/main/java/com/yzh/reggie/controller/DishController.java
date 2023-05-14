@@ -68,6 +68,7 @@ public class DishController {
      */
     @PostMapping()
     public R<String> save(@RequestBody DishDto dishDto){
+        log.info("===============");
         log.info(dishDto.toString());
         dishService.saveWithFlavor(dishDto);
         deleteRedisCache(dishDto);
