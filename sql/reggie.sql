@@ -11,7 +11,7 @@
  Target Server Version : 80028
  File Encoding         : 65001
 
- Date: 14/05/2023 12:15:37
+ Date: 14/05/2023 22:55:45
 */
 
 SET NAMES utf8mb4;
@@ -241,6 +241,26 @@ INSERT INTO `employee` VALUES (1, '管理员', 'admin', 'e10adc3949ba59abbe56e05
 INSERT INTO `employee` VALUES (1560803476323168258, '小明', 'long', 'e10adc3949ba59abbe56e057f20f883e', '13412345679', '1', '112233445566778899', 0, '2022-08-20 09:38:42', '2023-05-13 18:17:31', 1, 1);
 
 -- ----------------------------
+-- Table structure for info
+-- ----------------------------
+DROP TABLE IF EXISTS `info`;
+CREATE TABLE `info`  (
+  `id` bigint(0) NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '（通知标题）',
+  `text` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '（通知内容）',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '（创建时间）',
+  `create_user` bigint(0) NULL DEFAULT NULL COMMENT '（创建人）',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '通知表单' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of info
+-- ----------------------------
+INSERT INTO `info` VALUES (123, '通知测试', 'test666', '2023-05-14 19:51:06', 1);
+INSERT INTO `info` VALUES (1657734572800946178, 'test2', '无', '2023-05-14 21:08:16', 1);
+INSERT INTO `info` VALUES (1657745779045851137, '测试', '我出生在童星铅笔厂。后来，被运到文具店，被一个调皮又聪明的小孩买走了，安居在一个崭新的文具盒里。里面有我是一个高个子的铅笔，身穿一件黄颜色的外衣，头顶有红色的帽子。\n我有很多姐妹：钢笔、橡皮、尺子等。不多久，我们都混熟了，并知道了主人名叫莉莉，是个勤奋好学的人。\n起先，主人很喜欢我，常常拿我画画，写字。渐渐地，我被主人写短了，主人开始不喜欢我了，将我扔在一个角落里。最后还是老师捡起了我，把我放在丢', '2023-05-14 21:52:48', 1);
+
+-- ----------------------------
 -- Table structure for order_detail
 -- ----------------------------
 DROP TABLE IF EXISTS `order_detail`;
@@ -431,6 +451,8 @@ INSERT INTO `voucher` VALUES (1657352857466281985, 't2', 200, '2dd36294-186b-4a0
 INSERT INTO `voucher` VALUES (1657353154217504770, 't3', 100, '8d82ea28-e030-4d09-b5ef-34e5a52fee64.jpg', '', NULL, 1, '2023-05-13 19:52:39', 1);
 INSERT INTO `voucher` VALUES (1657353438033473538, 'te', 100, '15a8ab26-6a63-4134-8c8a-6c17ac242c9d.jpg', '', NULL, 1, '2023-05-13 19:53:46', 1);
 INSERT INTO `voucher` VALUES (1657354065476186114, 'q', 100, 'd69a3650-4068-465e-b338-9d93ca6d825e.jpg', '', NULL, 1, '2023-05-13 19:56:16', 1);
+INSERT INTO `voucher` VALUES (1657688315295485954, 'y', 300, '5094cf77-3f1d-4005-a4c2-916a819e3780.jpg', '', NULL, 1, '2023-05-14 18:04:27', 1);
+INSERT INTO `voucher` VALUES (1657690129059336193, 'l', 900, '30e7990d-4d44-472b-9301-974bce3da0e4.png', '', NULL, 1, '2023-05-14 18:11:40', 1);
 
 -- ----------------------------
 -- Table structure for voucher_user
