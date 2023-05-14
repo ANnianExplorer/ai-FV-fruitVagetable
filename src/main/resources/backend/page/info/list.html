@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <!-- 引入样式 -->
-    <link rel="stylesheet" href="../../plugins/element-ui/index.css" />
-    <link rel="stylesheet" href="../../styles/common.css" />
-    <link rel="stylesheet" href="../../styles/page.css" />
+    <link rel="stylesheet" href="../../plugins/element-ui/index.css"/>
+    <link rel="stylesheet" href="../../styles/common.css"/>
+    <link rel="stylesheet" href="../../styles/page.css"/>
 </head>
 <body>
-<div class="dashboard-container" id="category-app">
+<div class="dashboard-container" id="info-app">
     <div class="container">
         <div
                 class="tableBar"
@@ -24,12 +24,6 @@
             >
                 + 添加通知
             </el-button>
-           <!-- <el-button
-                    type="primary"
-                    @click="addClass('meal')"
-            >
-                + 新增餐饮套餐分类
-            </el-button>-->
         </div>
         <el-table
                 :data="tableData"
@@ -39,41 +33,40 @@
             <el-table-column
                     prop="name"
                     label="通知标题"
-            /></el-table-column>
-            <el-table-column
-                    prop="type"
-                    label="分类类型"
-            >
-                <template slot-scope="scope">
-                    <span>{{ scope.row.type == '1' ? '果蔬分类': '餐饮套餐分类' }}</span>
-                </template>
+            />
             </el-table-column>
+
             <el-table-column
-                    prop="updateTime"
+                    prop="createTime"
                     label="操作时间"
             >
                 <template slot-scope="scope">
-                    {{scope.row.updateTime}}
+                    {{scope.row.createTime}}
                 </template>
             </el-table-column>
-            <!--<el-table-column
-                    prop="sort"
-                    label="排序"
-            /></el-table-column>-->
+
             <el-table-column
                     label="操作"
                     width="160"
                     align="center"
             >
                 <template slot-scope="scope">
-                   <!-- <el-button
+                    <el-button
                             type="text"
                             size="small"
                             class="blueBug"
-                            @click="editHandle(scope.row)"
+                            @click="queryHandle(scope.row)"
                     >
-                        修改
-                    </el-button>-->
+                        查询
+                    </el-button>
+                    <el-button
+                            type="text"
+                            size="small"
+                            class="blueBug"
+                            @click="sendHandle(scope.row)"
+                    >
+                        发布
+                    </el-button>
                     <el-button
                             type="text"
                             size="small"
@@ -112,9 +105,16 @@
                         maxlength="14"
                 />
             </el-form-item>
-            <!--<el-form-item label="排序：">
-                <el-input v-model="classData.sort"  type="number" placeholder="请输入排序" />
-            </el-form-item>-->
+            <el-form-item label="通知内容：">
+                <el-input
+                        v-model="classData.text"
+                        type="textarea"
+                        :rows="3"
+                        placeholder="通知内容，最长200字"
+                        maxlength="200"
+                />
+            </el-form-item>
+
         </el-form>
         <span
                 slot="footer"
@@ -138,6 +138,20 @@
         > 保存并继续添加 </el-button>
       </span>
     </el-dialog>
+    <!-- 查看text弹框 -->
+    <el-dialog
+            :title="`通知标题：${diaForm.name}`"
+            :visible.sync="classData.dialogVisible2"
+            width="30%"
+            :before-close="handleClose2"
+    >
+        <div class="info-box">
+            <div class="item-box">
+                <span class="label">内容：</span>
+                <span class="des">{{ diaForm.text }}</span>
+            </div>
+        </div>
+    </el-dialog>
 </div>
 <!-- 开发环境版本，包含了有帮助的命令行警告 -->
 <script src="../../plugins/vue/vue.js"></script>
@@ -146,10 +160,10 @@
 <!-- 引入axios -->
 <script src="../../plugins/axios/axios.min.js"></script>
 <script src="../../js/request.js"></script>
-<script src="../../api/category.js"></script>
+<script src="../../api/info.js"></script>
 <script>
     new Vue({
-        el: '#category-app',
+        el: '#info-app',
         data() {
             return {
                 action: '',
@@ -157,13 +171,15 @@
                 page: 1,
                 pageSize: 10,
                 tableData: [],
-                type :'',
+                diaForm: {},
+                // type :'',
                 classData: {
-                    'title': '添加果蔬分类',
+                    'title': '添加通知分类',
                     'dialogVisible': false,
-                    'categoryId': '',
+                    'dialogVisible2': false,
+                    'infoId': '',
                     'name': '',
-                    sort: ''
+                    'text': ''
                 }
             }
         },
@@ -174,8 +190,8 @@
         mounted() {
         },
         methods: {
-            async init () {
-                await getCategoryPage({'page': this.page, 'pageSize': this.pageSize}).then(res => {
+            async init() {
+                await getInfoPage({'page': this.page, 'pageSize': this.pageSize}).then(res => {
                     if (String(res.code) === '1') {
                         this.tableData = res.data.records
                         this.counts = Number(res.data.total)
@@ -193,28 +209,29 @@
             // 添加
             addClass(st) {
                 if (st == 'class') {
-                    this.classData.title = '新增果蔬分类'
-                    this.type = '1'
-                } else {
-                    this.classData.title = '新增套餐分类'
-                    this.type = '2'
+                    this.classData.title = '添加优惠券'
                 }
                 this.action = 'add'
                 this.classData.name = ''
-                this.classData.sort = ''
                 this.classData.dialogVisible = true
             },
-            editHandle(dat) {
-                this.classData.title = '修改分类'
-                this.action = 'edit'
-                this.classData.name = dat.name
-                this.classData.sort = dat.sort
-                this.classData.id = dat.id
-                this.classData.dialogVisible = true
+            // 查询内容
+            queryHandle(dat){
+                //应该有一个弹窗显示信息
+                this.diaForm = {}
+                this.classData.dialogVisible2 = true
+                this.diaForm = { ...dat }
+            },
+            //发送公告
+            sendHandle(dat){
+                //感觉应该是
             },
             // 关闭弹窗
             handleClose(st) {
                 this.classData.dialogVisible = false
+            },
+            handleClose2(st) {
+                this.classData.dialogVisible2 = false
             },
             //删除
             deleteHandle(id) {
@@ -223,7 +240,7 @@
                     'cancelButtonText': '取消',
                     'type': 'warning'
                 }).then(() => {
-                    deleCategory(id).then(res => {
+                    deleInfo(id).then(res => {
                         if (res.code === 1) {
                             this.$message.success('删除成功！')
                             this.handleQuery()
@@ -238,42 +255,19 @@
             //数据提交
             submitForm(st) {
                 const classData = this.classData
-                const valid = (classData.name === 0 ||classData.name)  && (classData.sort === 0 || classData.sort)
+                const valid = (classData.name === 0 || classData.name) && (classData.text === 0 || classData.text)
                 if (this.action === 'add') {
                     if (valid) {
                         const reg = /^\d+$/
-                        if (reg.test(classData.sort)) {
-                            addCategory({'name': classData.name,'type':this.type, sort: classData.sort}).then(res => {
-                                console.log(res)
-                                if (res.code === 1) {
-                                    this.$message.success('分类添加成功！')
-                                    if (!st) {
-                                        this.classData.dialogVisible = false
-                                    } else {
-                                        this.classData.name = ''
-                                        this.classData.sort = ''
-                                    }
-                                    this.handleQuery()
-                                } else {
-                                    this.$message.error(res.msg || '操作失败')
-                                }
-                            }).catch(err => {
-                                this.$message.error('请求出错了：' + err)
-                            })
-                        } else {
-                            this.$message.error('排序只能输入数字类型')
-                        }
-
-                    } else {
-                        this.$message.error('请输入分类名称或排序')
-                    }
-                } else if (valid) {
-                    const reg = /^\d+$/
-                    if (reg.test(this.classData.sort)) {
-                        editCategory({'id':this.classData.id,'name': this.classData.name, sort: this.classData.sort}).then(res => {
+                        addInfo({'name': classData.name, 'text': classData.text}).then(res => {
+                            console.log(res)
                             if (res.code === 1) {
-                                this.$message.success('分类修改成功！')
-                                this.classData.dialogVisible = false
+                                this.$message.success('分类添加成功！')
+                                if (!st) {
+                                    this.classData.dialogVisible = false
+                                } else {
+                                    this.classData.name = ''
+                                }
                                 this.handleQuery()
                             } else {
                                 this.$message.error(res.msg || '操作失败')
@@ -282,17 +276,15 @@
                             this.$message.error('请求出错了：' + err)
                         })
                     } else {
-                        this.$message.error('排序只能输入数字类型')
+                        this.$message.error('请输入分类名称或排序')
                     }
-                } else {
-                    this.$message.error('请输入分类名称或排序')
                 }
             },
-            handleSizeChange (val) {
+            handleSizeChange(val) {
                 this.pageSize = val
                 this.init()
             },
-            handleCurrentChange (val) {
+            handleCurrentChange(val) {
                 this.page = val
                 this.init()
             }

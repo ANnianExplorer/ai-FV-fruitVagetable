@@ -7,6 +7,7 @@ import com.yzh.reggie.common.R;
 import com.yzh.reggie.entity.Voucher;
 import com.yzh.reggie.service.VoucherServer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -49,7 +50,7 @@ public class VoucherController {
         //条件构造器
         LambdaQueryWrapper<Voucher> voucherQuery = new LambdaQueryWrapper<>();
         voucherQuery
-                .like(name != null, Voucher::getName, name)
+                .like(StringUtils.isNotEmpty(name), Voucher::getName, name)
                 .orderByDesc(Voucher::getCreateTime);
         //执行查询
         voucherServer.page(pageInfo, voucherQuery);
