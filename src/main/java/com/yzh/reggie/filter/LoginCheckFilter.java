@@ -67,6 +67,13 @@ public class LoginCheckFilter implements Filter {
 
             filterChain.doFilter(request,response);
             return;
+        }//判断用户是否登录
+        else if(request.getSession().getAttribute("user") != null){
+            log.info("用户已登录，用户id为：{}",request.getSession().getAttribute("user"));
+            Long userId = (Long)request.getSession().getAttribute("user");
+            BaseContext.setCurrent(userId);
+            filterChain.doFilter(request,response);
+            return;
         }
         log.info("用户未登录");
 
