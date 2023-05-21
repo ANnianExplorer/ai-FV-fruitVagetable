@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/user")
 @Slf4j
-public class UserController {
+public class    UserController {
 
     /**==============
      * 这里需要修改

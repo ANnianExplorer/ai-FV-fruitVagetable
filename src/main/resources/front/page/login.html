@@ -5,8 +5,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no,minimal-ui">
-        <title>菩提阁</title>
-        <link rel="icon" href="./../images/favico.ico">
+        <title>福禄蔬菜店</title>
+        <link rel="shortcut icon" href="../favicon.ico">
         <!--不同屏幕尺寸根字体设置-->
         <script src="./../js/base.js"></script>
         <!--element-ui的样式-->
@@ -17,10 +17,25 @@
         <link rel="stylesheet" href="../styles/index.css" />
         <!--本页面内容的样式-->
         <link rel="stylesheet" href="./../styles/login.css" />
+        <style>
+            body{
+                background-color: white;
+            }
+            #login,.login-form-title,.im{
+                text-align: center;
+                background-color: white;
+            }
+            .divContainer{
+                border:3px solid seagreen;
+            }
+        </style>
       </head>
     <body>
         <div id="login" v-loading="loading">
-            <div class="divHead">登录</div>
+            <div class="login-form-title">
+                <img class="im" src="../images/login/img.png" style="width:160px;height:100px;" alt="" />
+            </div>
+            <!--<div class="divHead">登录</div>-->
             <div class="divContainer">
                 <el-input placeholder=" 请输入手机号码" v-model="form.phone"  maxlength='20'/></el-input>
                 <div class="divSplit"></div>
