@@ -118,7 +118,6 @@
   color: #333333;
   letter-spacing: 0;
 }
-
 #add_order .divContent .order .divSplit {
   height: 1px;
   opacity: 1;
@@ -194,10 +193,103 @@
   text-align: left;
   color: #e94e3c;
 }
+#add_order .divContent .voucher {
+  background: #ffffff;
+  border-radius: 6rem;
+  margin-top: 10rem;
+  margin-bottom: 10rem;
+  padding: 3rem 10rem 7rem 16rem;
+}
+#add_order .divContent .voucher .title {
+  height: 56rem;
+  line-height: 56rem;
+  opacity: 1;
+  font-size: 16rem;
+  font-family: PingFangSC, PingFangSC-Regular;
+  font-weight: 500;
+  text-align: left;
+  color: #333333;
+  letter-spacing: 0;
+}
+#add_order .divContent .voucher .divSplit {
+  height: 1px;
+  opacity: 1;
+  background-color: #efefef;
+  border: 0;
+}
+#add_order .divContent .voucher .itemList .item {
+  display: flex;
+}
+
+#add_order .divContent .voucher .itemList .item .el-image {
+  padding-top: 20rem;
+  padding-bottom: 20rem;
+  width: 64rem;
+  height: 64rem;
+}
+
+#add_order .divContent .voucher .itemList .item .el-image img {
+  width: 64rem;
+  height: 64rem;
+}
+
+#add_order .divContent .voucher .itemList .item:first-child .desc {
+  border: 0;
+}
+
+#add_order .divContent .voucher .itemList .item .desc {
+  padding-top: 20rem;
+  padding-bottom: 20rem;
+  border-top: 2px solid #ebeef5;
+  width: calc(100% - 64rem);
+}
+
+#add_order .divContent .voucher .itemList .item .desc .name {
+  height: 22rem;
+  opacity: 1;
+  font-size: 16rem;
+  font-family: PingFangSC, PingFangSC-Semibold;
+  font-weight: 600;
+  text-align: left;
+  color: #20232a;
+  line-height: 22rem;
+  letter-spacing: 0;
+  margin-left: 10rem;
+  margin-bottom: 16rem;
+}
+
+#add_order .divContent .voucher .itemList .item .desc .numPrice {
+  height: 22rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+#add_order .divContent .voucher .itemList .item .desc .numPrice span {
+  margin-left: 12rem;
+  height: 20rem;
+  opacity: 1;
+  font-size: 14rem;
+  font-family: PingFangSC, PingFangSC-Regular;
+  font-weight: 400;
+  text-align: left;
+  color: #818693;
+  line-height: 20rem;
+  letter-spacing: 0;
+  display: inline-block;
+}
+
+#add_order .divContent .voucher .itemList .item .desc .numPrice .price {
+  font-size: 20rem;
+  font-family: DIN, DIN-Medium;
+  font-weight: 500;
+  text-align: left;
+  color: #e94e3c;
+}
 
 #add_order
   .divContent
   .order
+  .voucher
   .itemList
   .item
   .desc

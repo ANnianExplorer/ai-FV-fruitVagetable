@@ -58,6 +58,39 @@
                             </div>
                     </div>
                 </div>
+                <div class="voucher">
+                    <div class="title">优惠券</div>
+                    <div class="divSplit"></div>
+                    <div class="itemList">
+                        <div class="item" v-for="(item,index) in cartDataV" :key="index">
+                            <el-image :src="imgPathConvert(item.image)">
+                                <div slot="error" class="image-slot">
+                                    <img src="./../images/noImg.png"/>
+                                </div>
+                            </el-image>
+                            <div class="desc">
+                                <div class="name">{{item.name}}</div>
+                                <div class="numPrice">
+                                    <span class="num">{{item.description}}</span>
+                                    <div class="price">
+                                        <span class="spanMoney">￥</span>{{item.price}}</div>
+                                </div>
+                            </div>
+                            <div v-if="item.id">
+                                <button @click="showCouponDialog = true">使用优惠券</button>
+                                <div v-if="showCouponDialog">
+                                    <p>是否使用优惠券？</p>
+                                    <button @click="useCoupon(true)">是</button>
+                                    <button @click="useCoupon(false)">否</button>
+                                </div>
+                            </div>
+                            <div v-else>
+                                <!-- 不显示优惠券按钮 -->
+                                <p>此商品不能使用优惠券</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="note">
                     <div class="title">备注</div>
                     <van-field
@@ -109,10 +142,15 @@
                         },
                         finishTime:'',//送达时间
                         cartData:[],
+                        cartDataV:[],
+                        countPrice:0,// 优惠券金额
+                        showCouponDialog: false,
+                        selectedCoupon: null,    // 用户选择的优惠券
                         note:''//备注信息
                     }
                 },
                 computed:{
+                    // 果蔬数量
                     goodsNum(){
                         let num = 0
                         this.cartData.forEach(item=>{
@@ -124,12 +162,24 @@
                             return '99+'
                         }
                     },
+                    // 优惠劵价格
+                    goodsPriceV(){
+                        let price = 0
+                        this.cartDataV.forEach(item=>{
+                            price = item.price;
+                        })
+                        return price
+                    },
+                    // 果蔬总价格
                     goodsPrice(){
-                    let price = 0
-                    this.cartData.forEach(item=>{
-                        price += (item.number * item.amount)
-                    })
-                    return price
+                        let price = 0
+                        this.cartData.forEach(item=>{
+                            price += (item.number * item.amount)
+                        })
+                        if (this.countPrice >= price){
+                            return 0
+                        }
+                        return price - this.countPrice
                     }
                 },
                 created(){
@@ -140,11 +190,21 @@
                     goBack(){
                         history.go(-1)
                     },
+                    useCoupon(choice) {
+                        // 处理用户选择
+                        if (choice) {
+                            this.countPrice = this.goodsPriceV;
+                        }
+                        // 关闭弹框
+                        this.showCouponDialog = false;
+                    },
                     initData(){
                         //获取默认的地址
                         this.defaultAddress()
                         //获取购物车的商品
                         this.getCartData()
+                        //获取优惠券的数据信息
+                        this.getVoucher()
                     },
                     //获取默认地址
                     async defaultAddress(){
@@ -181,6 +241,14 @@
                         const res = await cartListApi({})
                         if(res.code === 1){
                             this.cartData = res.data
+                        }else{
+                            this.$notify({ type:'warning', message:res.msg});
+                        }
+                    },
+                    async getVoucher(){
+                        const res = await orderVApi({})
+                        if(res.code === 1){
+                            this.cartDataV = res.data
                         }else{
                             this.$notify({ type:'warning', message:res.msg});
                         }

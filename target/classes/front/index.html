@@ -34,14 +34,14 @@
           <div class="divDesc">
             <div class="divName">福禄蔬菜店</div>
             <div class="divSend">
-                <span><img src="./images/time.png"/> 同城配送</span>
+                <span><img src="./images/time.png"/> 到点取货</span>
                 <span><img src="./images/money.png"/> 配送费0元</span>
                 <span><img src="./images/location.png"/> 预计时长24小时内</span>
             </div>
           </div>
         </div>
         <div class="divDesc">
-          通过一点一滴的努力赢得大家的信任，从而赢得用户的喜爱。
+          通过努力赢得大家的信任，赢得喜爱。
         </div>
       </div>
       <div class="divBody">
@@ -61,7 +61,7 @@
               <div>
                 <div class="divName">{{item.name}}</div>
                 <div class="divDesc">{{item.description}}</div>
-                <div class="divDesc">{{'月销' + (item.saleNum ? item.saleNum : 0)  }}</div>
+                <!--<div class="divDesc">{{'月销' + (item.saleNum ? item.saleNum : 0)  }}</div>-->
                 <div class="divBottom"><span>￥</span><span>{{item.price/100}}</span></div>
                 <div class="divNum">
                   <div class="divSubtract" v-if="item.number > 0">

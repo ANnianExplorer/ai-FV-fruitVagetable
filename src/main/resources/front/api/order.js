@@ -32,3 +32,11 @@ function orderAgainApi(data) {
       data
   })
 }
+//获取优惠劵
+function orderVApi(data) {
+    return $axios({
+        'url': '/voucher/getVoucher',
+        'method': 'get',
+        params:{...data}
+    })
+}

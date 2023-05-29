@@ -47,7 +47,7 @@
                 </div>
                 <div class="divItem ">
                     <span>标签：</span> 
-                    <span v-for="(item,index) in labelList" :key="index" @click="form.label = item;activeIndex = index" :class="{spanItem:true,spanActiveSchool:activeIndex === index}">{{item}}</span>
+                    <span v-for="(item,index) in labelList" style="width: 80px" :key="index" @click="form.label = item;activeIndex = index" :class="{spanItem:true,spanActiveSchool:activeIndex === index}">{{item}}</span>
                 </div>
                 <div class="divSave" @click="saveAddress">保存地址</div>
                 <div class="divDelete" @click="deleteAddress" v-if="id">删除地址</div>
@@ -71,14 +71,14 @@
                     return {
                         title:'新增收货地址',
                         form:{
-                            consignee:'',//联系人
+                            consignee:'福禄蔬菜店',//联系人
                             phone:undefined,//手机号
                             sex:'1',//0表示女 1 表示男
-                            detail:'',//收货地址
+                            detail:'[默认]福禄蔬菜店',//收货地址
                             label:'公司',//标签
                         },
                         labelList:[
-                            '无','公司','家','学校'
+                            '蔬菜店','公司','家','学校'
                         ],
                         id:undefined,
                         activeIndex :0
@@ -117,10 +117,10 @@
                             this.$notify({ type:'warning', message:'请输入手机号'});
                             return 
                         }
-                        if(!form.detail){
+                        /*if(!form.detail){
                             this.$notify({ type:'warning', message:'请输入收货地址'});
                             return 
-                        }
+                        }*/
                         const reg = /^1[3|4|5|7|8][0-9]{9}$/
                         if(!reg.test(form.phone)){
                             this.$notify({ type:'warning', message:'手机号码不合法'});
