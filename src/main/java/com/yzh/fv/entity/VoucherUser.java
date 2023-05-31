@@ -2,6 +2,8 @@ package com.yzh.fv.entity;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * 用户和优惠券关联
  *
@@ -9,7 +11,7 @@ import lombok.Data;
  * @since ： 2023/5/13 14:58
  */
 @Data
-public class VoucherUser {
+public class VoucherUser implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;

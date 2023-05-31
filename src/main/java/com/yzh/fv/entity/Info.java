@@ -30,9 +30,9 @@ public class Info {
     @TableField(fill = FieldFill.INSERT)
     private Long createUser;
 
-    //使用填充下面这两个如果不写不知道为什么报错
-    @TableField(exist = false,fill = FieldFill.INSERT)
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime updateTime;
-    @TableField(exist = false,fill = FieldFill.INSERT)
+
+    @TableField(fill = FieldFill.INSERT)
     private Long updateUser;
 }

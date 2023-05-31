@@ -212,8 +212,10 @@ CREATE TABLE `info`  (
                          `id` bigint NOT NULL,
                          `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '（通知标题）',
                          `text` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '（通知内容）',
-                         `create_time` datetime NULL DEFAULT NULL COMMENT '（创建时间）',
-                         `create_user` bigint NULL DEFAULT NULL COMMENT '（创建人）',
+                         `create_time` datetime NOT NULL COMMENT '创建时间',
+                         `update_time` datetime NOT NULL COMMENT '更新时间',
+                         `create_user` bigint NOT NULL COMMENT '创建人',
+                         `update_user` bigint NOT NULL COMMENT '修改人',
                          PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '通知表单' ROW_FORMAT = DYNAMIC;
 
@@ -427,6 +429,16 @@ CREATE TABLE `voucher_user`  (
                                  `status` int NOT NULL DEFAULT 0 COMMENT '（用户是否使用0没用1用了）\r\n',
                                  PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '优惠券和用户关联表' ROW_FORMAT = DYNAMIC;
+
+DROP TABLE IF EXISTS `info_user`;
+CREATE TABLE `info_user`  (
+                                 `id` bigint NOT NULL,
+                                 `info_id` bigint NOT NULL DEFAULT 0 COMMENT '（关联信息id）\r\n',
+                                 `user_id` bigint NOT NULL DEFAULT 0 COMMENT '（关联用户id）\r\n',
+                                 PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '通知和用户关联表' ROW_FORMAT = DYNAMIC;
+
+
 
 -- ----------------------------
 -- Records of voucher_user

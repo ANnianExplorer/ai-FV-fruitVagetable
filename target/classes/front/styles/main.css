@@ -11,6 +11,17 @@
   height: 152rem;
   background-size: contain;
 }
+#main .divHead {
+  display: flex;
+}
+
+#main .divHead img:first-child {
+  margin-right: 50px;
+}
+
+#main .divHead img:last-child {
+  margin-left: 50px;
+}
 
 #main .divHead img {
   position: absolute;

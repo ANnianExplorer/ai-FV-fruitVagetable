@@ -2,8 +2,10 @@ package com.yzh.fv.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.yzh.fv.common.R;
+import com.yzh.fv.entity.InfoUser;
 import com.yzh.fv.entity.User;
 import com.yzh.fv.entity.VoucherUser;
+import com.yzh.fv.service.InfoUserService;
 import com.yzh.fv.service.UserService;
 import com.yzh.fv.service.VoucherUserServer;
 import com.yzh.fv.utils.ValidateCodeUtils;
@@ -46,6 +48,9 @@ public class    UserController {
 
     @Resource
     private RedisTemplate redisTemplate;
+
+    @Resource
+    private InfoUserService infoUserService;
 
 
     /**
@@ -136,6 +141,8 @@ public class    UserController {
                 User userV = userService.getOne(queryWrapper);
                 Long id = userV.getId();// 用户id
                 log.info("登录用户id是======================"+String.valueOf(id));
+
+                // 添加优惠券到关联表
                 LambdaQueryWrapper<VoucherUser> queryWrapperV = new LambdaQueryWrapper<>();
                 queryWrapperV.eq(VoucherUser::getUserId,id);
                 VoucherUser vu = voucherUserServer.getOne(queryWrapperV);
@@ -144,6 +151,19 @@ public class    UserController {
                     vu.setUserId(id);
                     voucherUserServer.save(vu);
                 }
+
+                // 添加通知到关联表
+                LambdaQueryWrapper<InfoUser> queryWrapperI = new LambdaQueryWrapper<>();
+                queryWrapperI.eq(InfoUser::getUserId,id);
+                InfoUser iu = infoUserService.getOne(queryWrapperI);
+                if (iu == null) {
+                    iu = new InfoUser();
+                    iu.setUserId(id);
+                    infoUserService.save(iu);
+                }
+                /*InfoUser infoUser = new InfoUser();
+                infoUser.setUserId(id);
+                infoUserService.save(infoUser);*/
 
             }
             session.setAttribute("user",user.getId());

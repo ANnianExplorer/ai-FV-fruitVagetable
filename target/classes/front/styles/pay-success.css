@@ -43,10 +43,10 @@
 }
 
 #pay_success .divContent img {
-  margin-top: 148rem;
+  margin-top: 28rem;
   margin-bottom: 19rem;
-  width: 90rem;
-  height: 86rem;
+  width: 200px;
+  height: 200rem;
 }
 
 #pay_success .divContent .divSuccess {
@@ -57,6 +57,18 @@
   font-weight: 500;
   text-align: center;
   color: #333333;
+  line-height: 33rem;
+  margin-top: 19rem;
+  margin-bottom: 10rem;
+}
+#pay_success .divContent .divWei {
+  height: 33rem;
+  opacity: 1;
+  font-size: 24rem;
+  font-family: PingFangSC, PingFangSC-Regular;
+  font-weight: 500;
+  text-align: center;
+  color: #ffc200;
   line-height: 33rem;
   margin-top: 19rem;
   margin-bottom: 10rem;

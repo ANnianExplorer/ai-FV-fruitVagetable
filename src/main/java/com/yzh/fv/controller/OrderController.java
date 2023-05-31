@@ -204,11 +204,10 @@ public class OrderController {
 
         return R.success(ordersDtoPage);
     }
-//客户端点击再来一单
+
     /**
+     * //客户端点击再来一单
      * 我们需要将订单内的菜品重新加入购物车，所以在此之前我们需要将购物车清空（业务层实现方法）
-     *
-     *
      */
     @PostMapping("/again")
     public R<String> againSubmit(@RequestBody Map<String,String> map){

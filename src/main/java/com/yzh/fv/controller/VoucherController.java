@@ -155,10 +155,9 @@ public class VoucherController {
                 voucher.setUpdateTime(LocalDateTime.now());
                 voucherServer.updateById(voucher);
             }
-            // 启用优惠劵后
-            // 获取更新最近的一条
         }
-
+        // 启用优惠劵后
+        // 获取更新最近的一条优惠券
         LambdaQueryWrapper<Voucher>  queryWrapperV  =  new  LambdaQueryWrapper<>();
         queryWrapperV.eq(Voucher::getStatus,  1)
                 .orderByDesc(Voucher::getUpdateTime)
