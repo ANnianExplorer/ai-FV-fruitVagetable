@@ -28,7 +28,7 @@
                     type="primary"
                     @click="addClass('meal')"
             >
-                + 新增餐饮套餐分类
+                + 新增果蔬组合分类
             </el-button>
         </div>
         <el-table
@@ -46,7 +46,7 @@
                     label="分类类型"
             >
                 <template slot-scope="scope">
-                    <span>{{ scope.row.type == '1' ? '果蔬分类': '餐饮套餐分类' }}</span>
+                    <span>{{ scope.row.type == '1' ? '果蔬分类': '果蔬组合分类' }}</span>
                 </template>
             </el-table-column>
             <el-table-column
@@ -198,7 +198,7 @@
                     this.classData.title = '新增果蔬分类'
                     this.type = '1'
                 } else {
-                    this.classData.title = '新增套餐分类'
+                    this.classData.title = '新增组合分类'
                     this.type = '2'
                 }
                 this.action = 'add'

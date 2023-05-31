@@ -174,7 +174,7 @@
                 diaForm: {},
                 // type :'',
                 classData: {
-                    'title': '添加通知分类',
+                    'title': '添加通知',
                     'dialogVisible': false,
                     'dialogVisible2': false,
                     'infoId': '',
@@ -262,7 +262,7 @@
                         addInfo({'name': classData.name, 'text': classData.text}).then(res => {
                             console.log(res)
                             if (res.code === 1) {
-                                this.$message.success('分类添加成功！')
+                                this.$message.success('通知添加成功！')
                                 if (!st) {
                                     this.classData.dialogVisible = false
                                 } else {
@@ -276,7 +276,7 @@
                             this.$message.error('请求出错了：' + err)
                         })
                     } else {
-                        this.$message.error('请输入分类名称或排序')
+                        this.$message.error('请输入通知名称或排序')
                     }
                 }
             },

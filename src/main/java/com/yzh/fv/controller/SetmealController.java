@@ -162,7 +162,7 @@ public class SetmealController {
     public R<String> saveUpdate(@RequestBody SetmealDto setmealDto){
         setmealService.updateWithDish(setmealDto);
         //deleteRedisCache(setmealDto);
-        return R.success("菜品修改成功！");
+        return R.success("果蔬修改成功！");
     }
 
     /**
