@@ -2,9 +2,20 @@
   width: 100%;
   height: 88rem;
   opacity: 1;
-  background: #333333;
+  background: #106013;
   position: relative;
 }
+
+button {
+  background-color: #ffc200;
+  color: black;
+  border-radius: 5px;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 5px;
+  font-size: 9px;
+}
+
 
 #add_order .divHead .divTitle {
   font-size: 18rem;

@@ -79,8 +79,9 @@
                             <div v-if="item.id">
                                 <button @click="showCouponDialog = true">使用优惠券</button>
                                 <div v-if="showCouponDialog">
-                                    <p>是否使用优惠券？</p>
+                                    <p style="color: red">是否使用优惠券？</p>
                                     <button @click="useCoupon(true)">是</button>
+                                    <span>    </span>
                                     <button @click="useCoupon(false)">否</button>
                                 </div>
                             </div>
@@ -128,6 +129,7 @@
         <script src="./../js/common.js"></script>
         <script src="./../api/main.js"></script>
         <script src="./../api/order.js"></script>
+        <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
         <script>
             new Vue({
                 el:"#add_order",
@@ -144,6 +146,9 @@
                         cartData:[],
                         cartDataV:[],
                         countPrice:0,// 优惠券金额
+                        VoucherID:0,
+                        VoucherOrederID:0,
+                        productPrice: 0,// 总金额
                         showCouponDialog: false,
                         selectedCoupon: null,    // 用户选择的优惠券
                         note:''//备注信息
@@ -166,6 +171,7 @@
                     goodsPriceV(){
                         let price = 0
                         this.cartDataV.forEach(item=>{
+                            this.VoucherID = item.id
                             price = item.price;
                         })
                         return price
@@ -179,6 +185,7 @@
                         if (this.countPrice >= price){
                             return 0
                         }
+                        this.productPrice = price - this.countPrice
                         return price - this.countPrice
                     }
                 },
@@ -194,7 +201,35 @@
                         // 处理用户选择
                         if (choice) {
                             this.countPrice = this.goodsPriceV;
+                            this.showCouponDialog = false;
+                            axios.post('/voucher/coupon/use', {
+                                couponStatus: 0,
+                                voucherID: this.VoucherID
+                            })
+                                .then(function(response) {
+                                    console.log(response);
+                                    // TODO: 处理服务器端返回的结果
+                                })
+                                .catch(function(error) {
+                                    console.error(error);
+                                    // TODO: 处理请求失败的情况
+                                });
+                            /*jQuery.ajax({
+                                type: "POST",
+                                url: "/voucher/coupon/use",
+                                data: {
+                                    couponStatus: 0,
+                                    voucherID: this.VoucherID,
+                                }
+                            }).done((response) => {
+                                console.log(response);
+                                // TODO: 处理服务器端返回的结果
+                            }).fail((error) => {
+                                console.error(error);
+                                // TODO: 处理请求失败的情况
+                            });*/
                         }
+                        this.VoucherOrederID = this.VoucherID
                         // 关闭弹框
                         this.showCouponDialog = false;
                     },
@@ -245,6 +280,7 @@
                             this.$notify({ type:'warning', message:res.msg});
                         }
                     },
+                    // 获取优惠券数据
                     async getVoucher(){
                         const res = await orderVApi({})
                         if(res.code === 1){
@@ -257,7 +293,8 @@
                         const params = {
                             remark:this.note,
                             payMethod:1,
-                            addressBookId:this.address.id
+                            addressBookId:this.address.id,
+                            voucherId:this.VoucherOrederID
                         }
                         const res = await addOrderApi(params)
                         if(res.code === 1){

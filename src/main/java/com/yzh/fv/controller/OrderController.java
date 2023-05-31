@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -54,6 +55,16 @@ public class OrderController {
         ordersService.submit(orders);
         return R.success("下单成功！");
     }
+    /*@PostMapping("/submit")
+    public R<String> submit(@RequestParam("couponStatus") Integer couponStatus,
+                            @RequestParam("voucherID") Long voucherID,
+                            @RequestBody Orders orders) {
+        Map<String, Long> request = new HashMap<>();
+        request.put("couponStatus", Long.valueOf(couponStatus));
+        request.put("voucherID", voucherID);
+        ordersService.submit(orders, request);
+        return R.success("下单成功！");
+    }*/
 
     /**
      * 页面显示

@@ -17,6 +17,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,8 @@ public class OrdersServiceImpl extends ServiceImpl<OrderMapper, Orders> implemen
     private UserService userService;
     @Resource
     private AddressBookService addressBookService;
+    @Resource
+    private VoucherServer voucherServer;
     /**
      * 下单
      * @param orders
@@ -54,6 +57,16 @@ public class OrdersServiceImpl extends ServiceImpl<OrderMapper, Orders> implemen
         //查询用户数据
         User user = userService.getById(userId);
 
+        // 查优惠劵
+        Long voucherId = orders.getVoucherId();
+        Voucher voucher = voucherServer.getById(voucherId);
+        BigDecimal countPrice = BigDecimal.ZERO;
+        if (voucher != null){
+            // 没有用到优惠券
+            countPrice = voucher.getPrice();
+        }
+
+        BigDecimal countP = countPrice;
         //查询地址数据
         Long addressBookId = orders.getAddressBookId();
         AddressBook addressBook = addressBookService.getById(addressBookId);
@@ -84,7 +97,20 @@ public class OrdersServiceImpl extends ServiceImpl<OrderMapper, Orders> implemen
         orders.setOrderTime(LocalDateTime.now());
         orders.setCheckoutTime(LocalDateTime.now());
         orders.setStatus(2);
-        orders.setAmount(new BigDecimal(amount.get()));//总金额
+        BigDecimal fvPrice = new BigDecimal(amount.get());
+
+        if (countP.compareTo(BigDecimal.ZERO) > 0){
+            orders.setVoucherId(voucherId);
+        }else {
+            orders.setVoucherId(0L);
+        }
+
+        // 这里的根据物品的总价和优惠券价格进行比较来赋值
+        if (fvPrice.compareTo(countP) > 0){
+            orders.setAmount(fvPrice.subtract(countP));//总金额
+        }else {
+            orders.setAmount(BigDecimal.ZERO);//总金额
+        }
         orders.setUserId(userId);
         orders.setNumber(String.valueOf(orderId));
         orders.setUserName(user.getName());

@@ -41,6 +41,8 @@ public class Orders implements Serializable {
     //支付方式 1微信，2支付宝
     private Integer payMethod;
 
+    //优惠券id
+    private Long voucherId;
 
     //实收金额
     private BigDecimal amount;

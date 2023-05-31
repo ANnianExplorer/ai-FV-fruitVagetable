@@ -17,17 +17,22 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
+ * 券控制器
  * 优惠券类
  *
- * @author : xiao
+ * @author 杨振华
+ * @date 2023/05/31
  * @since ： 2023/5/13 15:12
  */
 @RestController
@@ -201,5 +206,20 @@ public class VoucherController {
         }
         return R.error("暂无优惠劵");
     }
+    @PostMapping("/coupon/use")
+    public R<String> useCoupon(@RequestBody Map<String, Long> request) {
+        // TODO: 在后端中根据优惠券编号、订单编号和金额判断是否可以使用优惠券
+        // TODO：挪到OrderServiceImpl中
+        LambdaQueryWrapper<VoucherUser> voucherUserWrapper = new LambdaQueryWrapper<>();
+        voucherUserWrapper.eq(VoucherUser::getVoucherId, request.get("voucherID"))
+                .eq(VoucherUser::getUserId, BaseContext.getCurrentId());
+        VoucherUser voucherUser = voucherUserServer.getOne(voucherUserWrapper);
 
+        // 更新优惠券状态
+        voucherUser.setVoucherId(0L);
+        voucherUser.setStatus(request.get("couponStatus").intValue());
+        voucherUserServer.updateById(voucherUser);
+
+        return R.success("使用优惠券成功！");
+    }
 }
