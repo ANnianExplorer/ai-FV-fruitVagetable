@@ -149,6 +149,7 @@ public class    UserController {
                 if (vu == null) {
                     vu = new VoucherUser();
                     vu.setUserId(id);
+                    vu.setVoucherId(1664147932250677249L);// 新用户都有新用户优惠券
                     voucherUserServer.save(vu);
                 }
 
@@ -159,6 +160,7 @@ public class    UserController {
                 if (iu == null) {
                     iu = new InfoUser();
                     iu.setUserId(id);
+                    iu.setInfoId(1664148662764191745L);// 新用户通知
                     infoUserService.save(iu);
                 }
                 /*InfoUser infoUser = new InfoUser();
