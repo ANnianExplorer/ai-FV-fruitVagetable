@@ -24,4 +24,7 @@ public class VoucherUser implements Serializable {
 
     //该券是否使用（0没用，1用了）
     private Integer status;
+
+    //是否是新用户（0不是，1是）
+    private Integer checkv;
 }

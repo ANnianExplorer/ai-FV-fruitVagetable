@@ -45,6 +45,18 @@
 #info .divBody .item{
     border: 3px solid seagreen;
 }
+#info .divBody .item1 .inN{
+    background: #fffff;
+    color: red;
+    font-size: 22px;
+}
+#info .divBody .item1 .inT{
+    background: #fffff;
+    color: black;
+}
+#info .divBody .item1{
+    border: 3px solid seagreen;
+}
 
 #info .divBody .van-list .van-cell::after {
     binfo: 0;

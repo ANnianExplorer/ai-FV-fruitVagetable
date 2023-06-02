@@ -183,7 +183,8 @@ public class VoucherController {
         LambdaQueryWrapper<Voucher> voucherWrapper = new LambdaQueryWrapper<>();
         userWrapper.eq(VoucherUser::getUserId,BaseContext.getCurrentId());
         VoucherUser user = voucherUserServer.getOne(userWrapper);
-        if (user.getVoucherId() != 0 && user.getStatus() != 0){
+
+        if (user.getVoucherId() != 0 && user.getStatus() != 0 && user.getVoucherId() != 1664147932250677249L){
             // 有优惠劵且没有使用
             voucherWrapper.eq(Voucher::getId,user.getVoucherId());
             //Voucher voucher = voucherServer.getOne(voucherWrapper);// 得到优惠劵
@@ -201,6 +202,49 @@ public class VoucherController {
                 voucherDto.setDescription(voucher.getDescription());
                 return voucherDto;
             }).collect(Collectors.toList());
+            return R.success(voucherDtoList);
+        }
+        else if (user.getVoucherId() == 1664147932250677249L) {// 新用户
+            LambdaQueryWrapper<Voucher> queryWrapperV = new LambdaQueryWrapper<>();
+            queryWrapperV.eq(Voucher::getId, 1664147932250677249L);
+            //Voucher  one  =  voucherMapper.selectOne(queryWrapperV);
+            List<Voucher> voucherList1 = voucherServer.list(queryWrapperV);
+            voucherDtoList = voucherList1.stream().map((item) -> {
+                VoucherDto voucherDto = new VoucherDto();
+                // 拷贝忽略records
+                BeanUtils.copyProperties(item, voucherDto);
+                Voucher one = voucherMapper.selectOne(queryWrapperV);
+                voucherDto.setId(one.getId());
+                voucherDto.setName(one.getName());
+                voucherDto.setPrice(one.getPrice());
+                voucherDto.setImage(one.getImage());
+                voucherDto.setDescription(one.getDescription());
+                return voucherDto;
+            }).collect(Collectors.toList());
+            return R.success(voucherDtoList);
+        }else if (user.getVoucherId() == 0 && user.getCheckv() == 1){
+            LambdaQueryWrapper<Voucher> queryWrapperV = new LambdaQueryWrapper<>();
+            queryWrapperV.eq(Voucher::getStatus, 1)
+                    .orderByDesc(Voucher::getUpdateTime)
+                    .last("limit  1");
+            List<Voucher> voucherList1 = voucherServer.list(queryWrapperV);
+            voucherDtoList = voucherList1.stream().map((item) -> {
+                VoucherDto voucherDto = new VoucherDto();
+                // 拷贝忽略records
+                BeanUtils.copyProperties(item, voucherDto);
+                Voucher one = voucherMapper.selectOne(queryWrapperV);
+                voucherDto.setId(one.getId());
+                voucherDto.setName(one.getName());
+                voucherDto.setPrice(one.getPrice());
+                voucherDto.setImage(one.getImage());
+                voucherDto.setDescription(one.getDescription());
+                return voucherDto;
+            }).collect(Collectors.toList());
+            LambdaQueryWrapper<VoucherUser> qq = new LambdaQueryWrapper<>();
+            qq.eq(VoucherUser::getUserId,BaseContext.getCurrentId());
+            VoucherUser one = voucherUserServer.getOne(qq);
+            one.setCheckv(0);
+            voucherUserServer.updateById(one);
             return R.success(voucherDtoList);
         }
         return R.error("暂无优惠劵");

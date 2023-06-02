@@ -2,9 +2,11 @@ package com.yzh.fv.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.yzh.fv.common.R;
+import com.yzh.fv.entity.Info;
 import com.yzh.fv.entity.InfoUser;
 import com.yzh.fv.entity.User;
 import com.yzh.fv.entity.VoucherUser;
+import com.yzh.fv.mapper.InfoMapper;
 import com.yzh.fv.service.InfoUserService;
 import com.yzh.fv.service.UserService;
 import com.yzh.fv.service.VoucherUserServer;
@@ -52,6 +54,8 @@ public class    UserController {
     @Resource
     private InfoUserService infoUserService;
 
+    @Resource
+    private InfoMapper infoMapper;
 
     /**
      * 发送手机短信验证码
@@ -148,8 +152,12 @@ public class    UserController {
                 VoucherUser vu = voucherUserServer.getOne(queryWrapperV);
                 if (vu == null) {
                     vu = new VoucherUser();
+                    // 新用户
+                    vu.setVoucherId(1664147932250677249L);
                     vu.setUserId(id);
-                    vu.setVoucherId(1664147932250677249L);// 新用户都有新用户优惠券
+                    vu.setCheckv(1);
+
+                    // 新增保存
                     voucherUserServer.save(vu);
                 }
 
@@ -160,12 +168,14 @@ public class    UserController {
                 if (iu == null) {
                     iu = new InfoUser();
                     iu.setUserId(id);
-                    iu.setInfoId(1664148662764191745L);// 新用户通知
+                    LambdaQueryWrapper<Info>  queryWrapperIF  =  new  LambdaQueryWrapper<>();
+                    queryWrapperIF
+                            .orderByDesc(Info::getUpdateTime)
+                            .last("limit  1");
+                    Info one = infoMapper.selectOne(queryWrapperIF);
+                    iu.setInfoId(one.getId());
                     infoUserService.save(iu);
                 }
-                /*InfoUser infoUser = new InfoUser();
-                infoUser.setUserId(id);
-                infoUserService.save(infoUser);*/
 
             }
             session.setAttribute("user",user.getId());
