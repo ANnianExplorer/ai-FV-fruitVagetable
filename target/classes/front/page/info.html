@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no,minimal-ui">
+    <title>福禄蔬菜店</title>
+    <link rel="shortcut icon" href="../favicon.ico">
+    <!--不同屏幕尺寸根字体设置-->
+    <script src="./../js/base.js"></script>
+    <!--element-ui的样式-->
+    <link rel="stylesheet" href="../../backend/plugins/element-ui/index.css" />
+    <!-- 引入样式  -->
+    <link rel="stylesheet" href="../styles/index.css" />
+    <!--引入vant样式-->
+    <link rel="stylesheet" href="../styles/vant.min.css"/>
+    <!--本页面内容的样式-->
+    <link rel="stylesheet" href="./../styles/info.css" />
+</head>
+<body>
+<div id="info" class="app">
+    <div class="divHead">
+        <div class="divTitle">
+            <i class="el-icon-arrow-left" @click="goBack"></i>福禄蔬菜店
+        </div>
+    </div>
+    <div class="divBody" v-if="infoList.length > 0">
+        <van-list
+                v-model="loading"
+                :finished="finished"
+                finished-text="---以上就是最新消息---"
+                @load="getList"
+        >
+            <van-cell v-for="(info,index) in infoList" :key="index" class="item">
+                <div class="inN">
+                    <span>{{info.name}}</span>
+                </div>
+                <div class="inT">
+                    <span>{{info.text}}</span>
+                </div>
+            </van-cell>
+            <van-cell class="item1">
+                <div class="inN">
+                    <span>新用户</span>
+                </div>
+                <div class="inT">
+                    <span>欢迎来到福禄蔬菜店，祝你有一个愉快的购物体验</span>
+                </div>
+            </van-cell>
+        </van-list>
+        <van-list>
+
+        </van-list>
+    </div>
+    <div class="divNoData" v-else>
+        <div class="divContainer">
+            <div>暂无消息</div>
+        </div>
+    </div>
+</div>
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="../../backend/plugins/vue/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="../../backend/plugins/element-ui/index.js"></script>
+<!-- 引入vant组件 -->
+<script src="./../js/vant.min.js"></script>
+<!-- 引入axios -->
+<script src="../../backend/plugins/axios/axios.min.js"></script>
+<script src="./../js/request.js"></script>
+<script src="./../api/order.js"></script>
+<script src="./../api/main.js"></script>
+<script src="./../api/info.js"></script>
+<script>
+    new Vue({
+        el:"#info",
+        data(){
+            return {
+                paging:{
+                    page:1,
+                    pageSize:5
+                },
+                infoList:[],
+                loading:false,
+                finished:false
+            }
+        },
+        computed:{},
+        created(){
+            this.initData()
+        },
+        mounted(){},
+        methods:{
+            goBack(){
+                history.go(-1)
+            },
+            initData(){
+                this.getList()
+            },
+            async getList(){
+                if(this.finished){
+                    this.loading = false;
+                    return
+                }
+                const res = await InfoPagingApi(this.paging)
+                if(res.code === 1){
+                    this.infoList.push(...res.data.records)
+                    let records = res.data.records
+                    this.loading = false;
+                    if(this.paging.page >= res.data.pages){
+                        this.finished = true;
+                    }
+                    this.paging.page = this.paging.page + 1
+                }else{
+                    this.$notify({ type:'warning', message:res.msg});
+                }
+            },
+        }
+    })
+</script>
+</body>
+</html>
