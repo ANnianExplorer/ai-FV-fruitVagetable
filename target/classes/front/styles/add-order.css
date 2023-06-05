@@ -7,7 +7,7 @@
 }
 
 button {
-  background-color: #ffc200;
+  background-color: #67C23A;
   color: black;
   border-radius: 5px;
   border: none;
@@ -408,7 +408,7 @@ button {
 }
 #add_order .divCart .btnSubmitActive {
   color: #333333;
-  background: #ffc200;
+  background: #67C23A;
 }
 
 #add_order .divCart .divGoodsNum {
