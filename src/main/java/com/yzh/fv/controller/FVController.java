@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 @RestController
 @Slf4j
 @RequestMapping("/dish")
-public class DishController {
+public class FVController {
 
     @Resource
     private DishService dishService;
