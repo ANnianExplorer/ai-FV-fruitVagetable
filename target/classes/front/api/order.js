@@ -32,6 +32,13 @@ function orderAgainApi(data) {
       data
   })
 }
+//清空购物车
+function clearCartApi() {
+  return $axios({
+      'url': '/shoppingCart/clean',
+      'method': 'delete'
+  })
+}
 //获取优惠劵
 function orderVApi(data) {
     return $axios({

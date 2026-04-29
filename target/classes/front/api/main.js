@@ -67,4 +67,24 @@ function setMealDishDetailsApi(id) {
     })
 }
 
+//获取销量排行榜数据
+function salesRankingApi(data) {
+    return $axios({
+        'url': '/user/product/sales-ranking',
+        'method': 'get',
+        params:{...data}
+    })
+}
+
+// 暴露为全局函数
+window.categoryListApi = categoryListApi;
+window.dishListApi = dishListApi;
+window.setmealListApi = setmealListApi;
+window.cartListApi = cartListApi;
+window.addCartApi = addCartApi;
+window.updateCartApi = updateCartApi;
+window.clearCartApi = clearCartApi;
+window.setMealDishDetailsApi = setMealDishDetailsApi;
+window.salesRankingApi = salesRankingApi;
+
 

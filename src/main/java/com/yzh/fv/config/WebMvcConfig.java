@@ -41,6 +41,9 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
         registry.addResourceHandler("/backend/**").addResourceLocations("classpath:/backend/");
         registry.addResourceHandler("/front/**").addResourceLocations("classpath:/front/");
+        // 添加对js和plugins目录的直接访问映射，解决404错误
+        registry.addResourceHandler("/js/**").addResourceLocations("classpath:/backend/js/");
+        registry.addResourceHandler("/plugins/**").addResourceLocations("classpath:/backend/plugins/");
     }
 
     /**
@@ -64,7 +67,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.yzh.reggie.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.yzh.fv.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }

@@ -33,15 +33,25 @@
             <div class="divLinks">
                 <div class="item" @click="toAddressPage">
                     <img src="./../images/locations.png"/>
-                    <span>地址管理</span>
+                    <p>地址管理</p>
+                    
                     <i class="el-icon-arrow-right"></i>
                 </div>
                 <div class="divSplit"></div>
                 <div class="item" @click="toOrderPage">
+                    
                     <img src="./../images/orders.png"/>
-                    <span>历史订单</span>
+                    <p>历史订单</p>
                     <i class="el-icon-arrow-right"></i>
                 </div>
+                <div class="divSplit"></div>
+                <div class="item" @click="toMyEvaluates">
+                    
+                    <img src="./../images/evaluate.png"/>
+                    <p>我的评价</p>
+                    <i class="el-icon-arrow-right"></i>
+                </div>
+                <div class="divSplit"></div>
             </div>
             <div class="divOrders" v-if="order[0]">
                 <div class="title">最新订单</div>
@@ -54,6 +64,7 @@
                     <div v-for="(item,index) in order[0].orderDetails" :key="index" class="item">
                         <span>{{item.name}}</span>
                         <span>x{{item.number}}</span>
+                        <button v-if="order[0].status === 4" class="btnEvaluate" @click="toEvaluatePage(order[0], item)">评价</button>
                     </div>
                 </div>
                 <div class="result">
@@ -82,6 +93,7 @@
     <script src="./../js/request.js"></script>
     <script src="./../api/order.js"></script>
     <script src="./../api/login.js"></script>
+    <script src="./../api/evaluate.js"></script>
     <script>
         new Vue({
             el:"#user",
@@ -122,6 +134,11 @@
                 toOrderPage(){
                     window.requestAnimationFrame(()=>{
                         window.location.href = '/front/page/order.html'
+                    }) 
+                },
+                toMyEvaluates(){
+                    window.requestAnimationFrame(()=>{
+                        window.location.href = '/front/page/evaluate-history.html'
                     }) 
                 },
                 initData(){
@@ -168,6 +185,11 @@
                     }
                     return str
                 },
+                toEvaluatePage(order, item){
+                    window.requestAnimationFrame(()=>{
+                        window.location.href = `/front/page/evaluate-history.html?foodId=${item.id}&foodName=${encodeURIComponent(item.name)}&foodPrice=${item.price}&orderId=${order.id}&orderDetailId=${item.id}`
+                    })
+                },
                 async addOrderAgain(){
                     const res = await orderAgainApi({id:this.order[0].id})
                     if(res.code === 1){
@@ -187,6 +209,11 @@
                     }else{
                         this.$notify({ type:'warning', message:res.msg});
                     }                
+                },
+                toMyEvaluates(){
+                    window.requestAnimationFrame(()=>{
+                        window.location.href = '/front/page/evaluate-history.html'
+                    })
                 }
             }
         })

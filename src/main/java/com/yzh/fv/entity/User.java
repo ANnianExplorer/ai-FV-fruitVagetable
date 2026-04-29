@@ -2,6 +2,8 @@ package com.yzh.fv.entity;
 
 import lombok.Data;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+
 /**
  * 用户信息
  * 使用手机验证码登录
@@ -36,4 +38,8 @@ public class User implements Serializable {
 
     //状态 0:禁用，1:正常
     private Integer status;
+
+    private LocalDateTime createTime;
+
+    private LocalDateTime updateTime;
 }

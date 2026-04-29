@@ -188,10 +188,8 @@ public class OrderController {
             LambdaQueryWrapper<OrderDetail> orderDetailLambdaQueryWrapper = new LambdaQueryWrapper<>();
             orderDetailLambdaQueryWrapper.eq(OrderDetail::getOrderId,itemId);
 
-            int count = orderDetailService.count(orderDetailLambdaQueryWrapper);
-
             List<OrderDetail> orderDetailList = orderDetailService.list(orderDetailLambdaQueryWrapper);
-
+            int count = orderDetailList.size();
             ordersDto.setSumNum(count);
 
             ordersDto.setOrderDetails(orderDetailList);

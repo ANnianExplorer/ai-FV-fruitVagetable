@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 /**
  * 全局异常处理
@@ -40,7 +43,34 @@ public class GlobalExceptionHandle {
 
     @ExceptionHandler(CustomException.class)
     public R<String> exceptionHandle(CustomException ex){
-        log.error(ex.getMessage());
+        log.error("业务异常：{}", ex.getMessage());
         return R.error(ex.getMessage());
+    }
+    
+    /**
+     * 处理参数校验异常
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public R<String> exceptionHandler(MethodArgumentNotValidException ex) {
+        // 获取校验失败的字段和错误信息
+        String errorMessage = ex.getBindingResult().getFieldErrors().stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .findFirst()
+                .orElse("参数校验失败");
+        log.warn("参数校验异常：{}", errorMessage);
+        return R.error(errorMessage);
+    }
+
+    /**
+     * 处理其他异常
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(Exception.class)
+    public R<String> exceptionHandler(Exception ex) {
+        log.error("未知错误：{}", ex.getMessage(), ex);
+        return R.error("未知错误");
     }
 }

@@ -57,38 +57,63 @@ public class LoginCheckFilter implements Filter {
             return;
         }
 
-        //4、管理端判断登录状态，如果已登录，则直接放行
+        //4、判断登录状态
+        
+        // 判断是否为用户端API路径（/user/开头但不是登录或发送消息接口）
+        boolean isUserApi = requestURI.startsWith("/user/") && 
+                           !requestURI.equals("/user/login") && 
+                           !requestURI.equals("/user/sendMsg");
+        
+        // 如果是用户端API路径，必须使用用户登录状态，不允许使用管理端身份
+        if (isUserApi) {
+            Object userObj = request.getSession().getAttribute("user");
+            if (userObj != null) {
+                try {
+                    Long userId = (Long) userObj;
+                    log.info("移动端用户已登录，用户id为：{}", userId);
+                    BaseContext.setCurrent(userId);
+                    request.setAttribute("loginType", "user");
+                    filterChain.doFilter(request, response);
+                    return;
+                } catch (ClassCastException e) {
+                    log.error("用户ID类型转换错误: {}", e.getMessage());
+                }
+            }
+            // 用户端API但用户未登录，直接返回未登录状态，不检查管理端登录
+            log.info("用户端API路径用户未登录，请求URI: {}", requestURI);
+            response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));
+            return;
+        }
+        
+        // 非用户端API路径，检查管理端登录
         if (request.getSession().getAttribute("employee") != null){
             Long empId = (Long) request.getSession().getAttribute("employee");
-            log.info("用户已登录，用户id为：{}",empId);
-
-            // ThreadLocal 在同一线程中，获取用户id
+            log.info("管理端用户已登录，用户id为：{}", empId);
             BaseContext.setCurrent(empId);
-
-            filterChain.doFilter(request,response);
-            return;
-        }//判断用户是否登录
-        else if(request.getSession().getAttribute("user") != null){
-            log.info("用户已登录，用户id为：{}",request.getSession().getAttribute("user"));
-            Long userId = (Long)request.getSession().getAttribute("user");
-            BaseContext.setCurrent(userId);
-            filterChain.doFilter(request,response);
+            request.setAttribute("loginType", "employee");
+            filterChain.doFilter(request, response);
             return;
         }
-        log.info("用户未登录");
-
-        //4、移动端判断登录状态，如果已登录，则直接放行
-        if (request.getSession().getAttribute("user") != null){
-            Long userId = (Long) request.getSession().getAttribute("user");
-            log.info("用户已登录，用户id为：{}",userId);
-
-            // ThreadLocal 在同一线程中，获取用户id
-            BaseContext.setCurrent(userId);
-
-            filterChain.doFilter(request,response);
-            return;
+        
+        // 仅在非用户端API路径且管理员未登录时，最后检查移动端用户登录
+        if (!isUserApi) {
+            Object userObj = request.getSession().getAttribute("user");
+            if (userObj != null) {
+                try {
+                    Long userId = (Long) userObj;
+                    log.info("移动端用户已登录，用户id为：{}", userId);
+                    BaseContext.setCurrent(userId);
+                    request.setAttribute("loginType", "user");
+                    filterChain.doFilter(request, response);
+                    return;
+                } catch (ClassCastException e) {
+                    log.error("用户ID类型转换错误: {}", e.getMessage());
+                }
+            }
         }
-        log.info("用户未登录");
+        
+        // 记录未登录状态的日志，包含请求URI以便于调试
+        log.info("用户未登录，请求URI: {}", requestURI);
 
         //5、如果未登录则返回未登录结果
         response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));

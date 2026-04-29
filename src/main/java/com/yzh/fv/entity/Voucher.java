@@ -33,9 +33,16 @@ public class Voucher implements Serializable {
 
     //优惠券类型（可以为空）
     private Integer type;
+    
+    //最低消费金额
+    private BigDecimal minMoney;
 
     //优惠券状态（0启用，1停用）
     private Integer status;
+
+    private LocalDateTime startTime;
+
+    private LocalDateTime endTime;
 
     //优惠券创建时间
     @TableField(fill = FieldFill.INSERT)
@@ -45,11 +52,12 @@ public class Voucher implements Serializable {
     @TableField(fill = FieldFill.INSERT)
     private Long createUser;
 
-    //使用填充下面这两个如果不写不知道为什么报错
-    //TODO 肯定错啊，MyMetaObjecthandler里面设置了四个都得有，你用就得都有
-    @TableField(fill = FieldFill.INSERT)
-    public LocalDateTime updateTime;
-    @TableField(fill = FieldFill.INSERT)
+    //更新时间在创建和更新时都需要填充
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updateTime;
+    
+    //更新人在创建和更新时都需要填充
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Long updateUser;
 
 }

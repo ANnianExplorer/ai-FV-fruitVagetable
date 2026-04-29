@@ -134,7 +134,17 @@ public class FVController {
         return R.success(dishDto);
     }
 
-
+    /**
+     * 获取菜品信息
+     * @param Id
+     * @return
+     */
+    @GetMapping("/evaluate1/{id}")
+    public R<Dish> getDishById(@PathVariable Long id) {
+        log.info("获取菜品信息: Id={}", id);
+        Dish dish = dishService.getById(id);
+        return R.success(dish);
+    }
     /**
      * 保存更新
      *

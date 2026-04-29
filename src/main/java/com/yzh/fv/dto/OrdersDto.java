@@ -15,4 +15,9 @@ public class OrdersDto extends Orders {
     private List<OrderDetail> orderDetails;
 
     private int sumNum;
+
+    /**
+     * 用于看是果蔬dish还是套餐setmeal
+     */
+//    private Integer type;
 }

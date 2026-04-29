@@ -46,6 +46,12 @@ public class Orders implements Serializable {
 
     //实收金额
     private BigDecimal amount;
+    
+    //原始价格
+    private BigDecimal originalAmount;
+    
+    //优惠券金额
+    private BigDecimal voucherAmount;
 
     //备注
     private String remark;

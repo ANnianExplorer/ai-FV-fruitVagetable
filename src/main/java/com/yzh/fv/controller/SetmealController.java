@@ -140,6 +140,17 @@ public class SetmealController {
 
         return R.success(SetmealList);
     }
+    /**
+     * 获取菜品信息
+     * @param Id
+     * @return
+     */
+    @GetMapping("/evaluate2/{id}")
+    public R<Setmeal> getSetmealById(@PathVariable Long id) {
+        log.info("获取组合信息: Id={}", id);
+        Setmeal setmeal = setmealService.getById(id);
+        return R.success(setmeal);
+    }
 
     /**
      * 修改后台页面展示信息

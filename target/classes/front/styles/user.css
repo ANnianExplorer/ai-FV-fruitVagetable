@@ -83,14 +83,16 @@
   overflow-y: auto;
 }
 
-#user .divLinks {
-  height: 104rem;
-  opacity: 1;
-  background: #ffffff;
-  border-radius: 6rem;
-  padding-left: 17rem;
-  padding-right: 11rem;
-  margin: 10rem;
+#user .divLinks {  
+  min-height: 204rem;  
+  opacity: 1;  
+  background: #ffffff;  
+  border-radius: 6rem;  
+  padding-left: 17rem;  
+  padding-right: 11rem;  
+  margin: 10rem;  
+  padding-top: 10rem;  
+  padding-bottom: 10rem;  
 }
 
 #user .divLinks .item {
@@ -222,6 +224,17 @@
   line-height: 36rem;
   letter-spacing: 0;
   position: relative;
+}
+
+#user .divOrders .dishList .item .btnEvaluate {
+  background: #007aff;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  border: none;
+  margin-left: 10px;
 }
 
 #user .quitLogin {

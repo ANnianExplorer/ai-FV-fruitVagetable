@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -112,7 +113,7 @@ public class    UserController {
      * 在这里将用户也绑定到优惠券-用户信息表上
      */
     @PostMapping("/login")
-    public R<User> login(@RequestBody Map map, HttpSession session){
+    public R<User> login(@RequestBody Map map, HttpServletRequest request){
         log.info(map.toString());
         //获取手机号
         String phone = map.get("phone").toString();
@@ -120,7 +121,7 @@ public class    UserController {
         String code = map.get("code").toString();
 
         //从Session中获取保存的验证码
-        Object codeInSession = session.getAttribute(phone);
+        Object codeInSession = request.getSession().getAttribute(phone);
 
         //从redis中获取缓存的验证码
         //Object codeInSession = redisTemplate.opsForValue().get(phone);
@@ -140,45 +141,34 @@ public class    UserController {
                 user.setStatus(1);
                 user.setName("用户"+codeInSession);
                 userService.save(user);
-                //==========================
-                queryWrapper.eq(User::getPhone,phone);
-                User userV = userService.getOne(queryWrapper);
-                Long id = userV.getId();// 用户id
-                log.info("登录用户id是======================"+String.valueOf(id));
-
-                // 添加优惠券到关联表
-                LambdaQueryWrapper<VoucherUser> queryWrapperV = new LambdaQueryWrapper<>();
-                queryWrapperV.eq(VoucherUser::getUserId,id);
-                VoucherUser vu = voucherUserServer.getOne(queryWrapperV);
-                if (vu == null) {
-                    vu = new VoucherUser();
-                    // 新用户
-                    vu.setVoucherId(1664147932250677249L);
-                    vu.setUserId(id);
-                    vu.setCheckv(1);
-
-                    // 新增保存
-                    voucherUserServer.save(vu);
-                }
-
+                
+                // 获取新注册用户的ID
+                Long userId = user.getId();
+                log.info("新注册用户ID：{}", userId);
+                
+                // 为新用户自动发放新人优惠券
+                log.info("开始为新用户发放新人优惠券");
+                voucherUserServer.issueNewUserCoupons(userId);
+                log.info("新用户优惠券发放完成");
+                
                 // 添加通知到关联表
                 LambdaQueryWrapper<InfoUser> queryWrapperI = new LambdaQueryWrapper<>();
-                queryWrapperI.eq(InfoUser::getUserId,id);
+                queryWrapperI.eq(InfoUser::getUserId, userId);
                 InfoUser iu = infoUserService.getOne(queryWrapperI);
                 if (iu == null) {
                     iu = new InfoUser();
-                    iu.setUserId(id);
-                    LambdaQueryWrapper<Info>  queryWrapperIF  =  new  LambdaQueryWrapper<>();
+                    iu.setUserId(userId);
+                    LambdaQueryWrapper<Info> queryWrapperIF = new LambdaQueryWrapper<>();
                     queryWrapperIF
                             .orderByDesc(Info::getUpdateTime)
-                            .last("limit  1");
+                            .last("limit 1");
                     Info one = infoMapper.selectOne(queryWrapperIF);
                     iu.setInfoId(one.getId());
                     infoUserService.save(iu);
                 }
-
             }
-            session.setAttribute("user",user.getId());
+            request.getSession().removeAttribute("employee");
+            request.getSession().setAttribute("user",user.getId());
 
             // 如果用户登录成功，删除验证码
             redisTemplate.delete(phone);

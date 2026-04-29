@@ -65,6 +65,7 @@ public class EmployeeController {
         }
 
         //6、登录成功，将员工id存入Session并返回登录成功结果
+        request.getSession().removeAttribute("user");
         request.getSession().setAttribute("employee",emp.getId());
         return R.success(emp);
     }

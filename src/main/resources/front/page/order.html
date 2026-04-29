@@ -41,6 +41,7 @@
                             <div v-for="(item,index) in order.orderDetails" :key="index" class="item">
                                 <span>{{item.name}}</span>
                                 <span>x{{item.number}}</span>
+                                <button v-if="order.status === 4" class="btnEvaluate" @click="toEvaluatePage(order, item)">评价</button>
                             </div>
                         </div>
                         <div class="result">
@@ -111,6 +112,7 @@
                     const res = await orderPagingApi(this.paging)
                     if(res.code === 1){
                         this.orderList.push(...res.data.records)
+                        console.log("orderList:  ", this.orderList)
                         let records = res.data.records
                         if(records && Array.isArray(records)){
                             records.forEach(item=>{
@@ -129,6 +131,25 @@
                     }else{
                         this.$notify({ type:'warning', message:res.msg});
                     }
+                },
+                toEvaluatePage(order, item){
+                    window.requestAnimationFrame(()=>{
+                        let productId = item.dishId;
+                        let type = 1; // 默认类型为1，菜品果蔬
+                        // 这个order是订单对象，item是订单详情对象
+                        if (item.dishId !== null && item.setmealId === null) {
+                            type = 1;
+                            productId = item.dishId
+                        }else if (item.setmealId !== null && item.dishId === null) {
+                            type = 2;
+                            productId = item.setmealId
+                        }else {
+                            // 弹出错误
+                            this.$notify({ type:'warning', message:'商品信息有误'});
+                        }
+
+                        window.location.href = `/front/page/evaluate-page.html?productId=${productId}&type=${type}&name=${encodeURIComponent(item.name || '')}`
+                    })
                 },
                 async addOrderAgain(order){
                     const res = await orderAgainApi({id:order.id})
